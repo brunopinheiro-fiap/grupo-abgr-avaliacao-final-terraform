@@ -57,7 +57,7 @@ jobs:
           cd terraform
           python3 -m pip install --quiet --break-system-packages checkov 2>/dev/null || python3 -m pip install --quiet --user checkov 2>/dev/null || true
           if command -v checkov >/dev/null 2>&1; then
-            checkov -d . --framework terraform --exit-code 0 -o json > checkov-report.json || true
+            checkov -d . --framework terraform --soft-fail -o json > checkov-report.json || true
           else
             echo '{"note": "checkov nao instalado - scan ignorado"}' > checkov-report.json
           fi
