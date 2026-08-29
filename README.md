@@ -1,9 +1,16 @@
-# Terraform AWS: EC2 + Application Load Balancer (ALB)
+# Terraform com AWS: EC2 + Application Load Balancer (ALB)
 
->  Projeto de laboratório da disciplina **Arquitetura Compute e Storage** (FIAP MBA).
-> Cria, de forma **100% automatizada**, uma infraestrutura na AWS com **2 servidores EC2** atrás de um **Application Load Balancer (ALB)**, usando **Terraform** e **GitHub Actions**.
+>  Projeto avaliativo da disciplina **Arquitetura Compute e Storage** do Professor Ricardo Marega Morschbacher da FIAP MBA.
+>  Cria, de forma **100% automatizada**, uma infraestrutura na AWS com **2 servidores EC2** atrás de um **Application Load Balancer (ALB)**, usando **Terraform** e **GitHub Actions**.
 
-O deploy inteiro é feito pelo **GitHub Actions**: você só precisa de um repositório no GitHub, das chaves de acesso da AWS e apertar um botão. 👇
+>  Alunos
+> - Bruno Pinheiro dos Santos
+> - Anderson Peruci
+> - Renan José da Silva
+> - Gustavo Santos de Andrade
+
+
+O deploy inteiro é feito pelo **GitHub Actions**: você só precisa de um repositório no GitHub, das chaves de acesso da AWS e apertar um botão. 
 
 ---
 
@@ -148,7 +155,7 @@ O job `terraform-apply` executa estas etapas, em ordem:
 
 - Abra `http://<o-dns-que-voce-copiou>` (use **`http://`**, não `https://`).
 - Você verá uma página PHP com informações do servidor.
-- **Atualize (F5) várias vezes**: as informações do servidor que responde mudam, mostrando que o ALB está alternando entre os 2 EC2. 🎉
+- **Atualize (F5) várias vezes**: as informações do servidor que responde mudam, mostrando que o ALB está alternando entre os 2 EC2. 
 
 ---
 
