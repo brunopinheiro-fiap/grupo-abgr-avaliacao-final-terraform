@@ -35,27 +35,23 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
-        run: terraform init
-        working_directory: terraform
+        run: cd terraform && terraform init
 
       - name: Terraform Validate
-        run: terraform validate
-        working_directory: terraform
+        run: cd terraform && terraform validate
 
       - name: Terraform Format Check
-        run: terraform fmt -check -recursive || true
-        working_directory: terraform
+        run: cd terraform && terraform fmt -check -recursive || true
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out=tfplan
-        working_directory: terraform
+        run: cd terraform && terraform plan -out=tfplan
 
       - name: Run Checkov (informative)
         run: |
+          cd terraform
           checkov -d . --framework terraform --exit-code 0 || true
           echo "checkov-completed=true" >> $GITHUB_OUTPUT
-        working_directory: terraform
 
       - name: Upload Checkov Report
         if: always()
@@ -66,8 +62,7 @@ jobs:
 
       - name: Terraform Apply
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: terraform apply -auto-approve tfplan
-        working_directory: terraform
+        run: cd terraform && terraform apply -auto-approve tfplan
 
   terraform-destroy:
     if: github.event_name == 'workflow_dispatch'
@@ -91,8 +86,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
-        run: terraform init
+        run: cd terraform && terraform init
 
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve
-        working_directory: terraform
+        run: cd terraform && terraform destroy -auto-approve
