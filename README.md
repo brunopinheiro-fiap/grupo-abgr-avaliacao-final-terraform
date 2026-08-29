@@ -1,13 +1,13 @@
-# 🚀 Terraform AWS: EC2 + Application Load Balancer (ALB)
+# Terraform AWS: EC2 + Application Load Balancer (ALB)
 
-> Projeto de laboratório da disciplina **Arquitetura Compute e Storage** (FIAP MBA).
+>  Projeto de laboratório da disciplina **Arquitetura Compute e Storage** (FIAP MBA).
 > Cria, de forma **100% automatizada**, uma infraestrutura na AWS com **2 servidores EC2** atrás de um **Application Load Balancer (ALB)**, usando **Terraform** e **GitHub Actions**.
 
 O deploy inteiro é feito pelo **GitHub Actions**: você só precisa de um repositório no GitHub, das chaves de acesso da AWS e apertar um botão. 👇
 
 ---
 
-## 🎯 O que este projeto cria?
+## O que este projeto cria?
 
 Tudo é criado automaticamente na região **`us-east-1`**:
 
@@ -40,7 +40,7 @@ graph LR
 
 ---
 
-## 🧠 Conceitos básicos (glossário rápido)
+## Conceitos básicos (glossário rápido)
 
 - **AWS** — A nuvem da Amazon. Este projeto usa a região **`us-east-1`**.
 - **EC2** — Servidores virtuais ("máquinas") na nuvem.
@@ -55,7 +55,7 @@ graph LR
 
 ---
 
-## 📋 Pré-requisitos (passo a passo)
+## Pré-requisitos (passo a passo)
 
 ### 1. Conta AWS
 
@@ -71,7 +71,7 @@ O Terraform guarda o "estado" da infraestrutura em um bucket S3. O código já e
 4. (Recomendado) Ative **Bucket Versioning** — permite recuperar o estado se algo der errado.
 5. **Create bucket**.
 
-> ⚠️ Esse nome está definido em `terraform/provider.tf`. Se você usar outro nome, o deploy falhará — ou edite o arquivo para o nome que você criou.
+> Esse nome está definido em `terraform/provider.tf`. Se você usar outro nome, o deploy falhará — ou edite o arquivo para o nome que você criou.
 
 ### 3. Usuário IAM + chaves de acesso (Access Keys)
 
@@ -99,7 +99,7 @@ As chaves da AWS **não podem ficar escritas no código**. Elas ficam guardadas 
    - `ACCESS_KEY_ID` → seu Access Key ID
    - `SECRET_ACCESS_KEY` → seu Secret Access Key
 
-> ⚠️ Nunca cole essas chaves em arquivos do repositório! O `.gitignore` já protege o projeto contra isso.
+> Nunca cole essas chaves em arquivos do repositório! O `.gitignore` já protege o projeto contra isso.
 
 ### 6. (Opcional) Terraform instalado localmente
 
@@ -107,7 +107,7 @@ Só precisa se quiser rodar na sua própria máquina (Forma B): <https://develop
 
 ---
 
-## 🏗️ FORMA A (RECOMENDADA): Deploy pelo GitHub Actions
+## FORMA A (RECOMENDADA): Deploy pelo GitHub Actions
 
 Tudo é automático — o GitHub roda o Terraform para você.
 
@@ -133,11 +133,11 @@ O job `terraform-apply` executa estas etapas, em ordem:
 | 8. **Checkov (informativo)**     | Varredura de segurança — não impede o deploy           |
 | 9. **Terraform Apply**           | **Cria de fato todos os recursos na AWS**              |
 
-> ✅ Etapa **verde** = passou. Etapa **vermelha** = quebrou — clique nela para ver o log.
+> Etapa **verde** = passou. Etapa **vermelha** = quebrou — clique nela para ver o log.
 
-> 🔎 **Checkov** gera um relatório de segurança (`checkov-report.json`) disponível como **artefato** no final da execução (seção **Artifacts**). Ele é **informativo** — não impede o deploy.
+> **Checkov** gera um relatório de segurança (`checkov-report.json`) disponível como **artefato** no final da execução (seção **Artifacts**). Ele é **informativo** — não impede o deploy.
 
-> 🛠️ O workflow usa **Terraform 1.10.5** e versões atuais das actions (compatíveis com **Node 24**), sem avisos de deprecação.
+> O workflow usa **Terraform 1.10.5** e versões atuais das actions (compatíveis com **Node 24**), sem avisos de deprecação.
 
 ### Passo 3 — Descubra o endereço do balanceador
 
@@ -152,7 +152,7 @@ O job `terraform-apply` executa estas etapas, em ordem:
 
 ---
 
-## 🖥️ FORMA B (OPCIONAL): Deploy local no seu computador
+## FORMA B (OPCIONAL): Deploy local no seu computador
 
 Exige Terraform instalado e credenciais AWS configuradas (`aws configure` com as mesmas chaves).
 
@@ -173,9 +173,9 @@ terraform apply
 terraform output lb_dns_name
 ```
 
-> ⚠️ Localmente o Terraform também usa o backend S3 `tf-s3-grupo-abgr`. Sem o bucket criado e as credenciais configuradas, ele falha.
+> Localmente o Terraform também usa o backend S3 `tf-s3-grupo-abgr`. Sem o bucket criado e as credenciais configuradas, ele falha.
 >
-> 💡 Para **apenas validar o código** sem tocar na AWS:
+> Para **apenas validar o código** sem tocar na AWS:
 >
 > ```bash
 > terraform init -backend=false
@@ -196,7 +196,7 @@ Exemplo local: `terraform apply -var="key_name=minhachave"`
 
 ---
 
-## ✅ Validação (como saber se funcionou)
+## Validação (como saber se funcionou)
 
 1. **Console AWS → EC2 → Instâncias**: devem existir **2 instâncias** rodando — uma em `us-east-1a` e outra em `us-east-1b`, status `Running`.
 2. **Navegador → `http://<lb_dns_name>`**: a página PHP carrega.
@@ -205,7 +205,7 @@ Exemplo local: `terraform apply -var="key_name=minhachave"`
 
 ---
 
-## 🗑️ Destruição (importante para não gerar custos!)
+## Destruição (importante para não gerar custos!)
 
 O projeto tem um **workflow separado** só para destruir — **"Terraform Destroy"**:
 
@@ -213,7 +213,7 @@ O projeto tem um **workflow separado** só para destruir — **"Terraform Destro
 2. Clique em **Run workflow** → branch `main` → **Run workflow**.
 3. Aguarde: o Terraform remove **todos** os recursos criados.
 
-> 🔒 O **deploy** ("Terraform AWS EC2 + ALB Deploy") e o **destroy** ("Terraform Destroy") são workflows **separados**, com controle de concorrência: eles **nunca rodam ao mesmo tempo** — isso evita o erro de conflito de lock no estado S3
+> O **deploy** ("Terraform AWS EC2 + ALB Deploy") e o **destroy** ("Terraform Destroy") são workflows **separados**, com controle de concorrência: eles **nunca rodam ao mesmo tempo** — isso evita o erro de conflito de lock no estado S3
 
 1. Aba **Actions** → **"Terraform AWS EC2 + ALB Deploy"**.
 2. No job **`terraform-destroy`**, clique em **Run workflow** → branch `main` → **Run workflow**.
@@ -226,11 +226,11 @@ cd terraform
 terraform destroy   # digite "yes" para confirmar
 ```
 
-> ✅ Depois confira no console AWS se as instâncias sumiram.
+>  Depois confira no console AWS se as instâncias sumiram.
 
 ---
 
-## 📁 Estrutura do projeto
+##  Estrutura do projeto
 
 ├── terraform-deploy.yml ← Pipeline de DEPLOY (cria a infra)
 │ └── terraform-destroy.yml ← Pipeline de DESTROY (remove a infra, manual
@@ -254,7 +254,7 @@ trabalho_terraform/
 
 ---
 
-## 🆘 Problemas comuns (Troubleshooting)
+##  Problemas comuns (Troubleshooting)
 
 ### 1. Deploy falha na etapa "Terraform Init"
 
@@ -292,7 +292,7 @@ No GitHub Actions, clique na etapa **vermelha** e role até o **final do log** �
 
 ---
 
-## 📚 Referências para estudo
+##  Referências para estudo
 
 - [AWS EC2 — Documentação](https://aws.amazon.com/pt/ec2/)
 - [AWS Elastic Load Balancing (ALB) — Documentação](https://aws.amazon.com/pt/elasticloadbalancing/)
