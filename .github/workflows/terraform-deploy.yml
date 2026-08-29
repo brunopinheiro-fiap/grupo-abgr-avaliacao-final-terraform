@@ -36,21 +36,26 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        working_directory: terraform
 
       - name: Terraform Validate
         run: terraform validate
+        working_directory: terraform
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive || true
+        working_directory: terraform
 
       - name: Terraform Plan
         id: plan
         run: terraform plan -out=tfplan
+        working_directory: terraform
 
       - name: Run Checkov (informative)
         run: |
           checkov -d . --framework terraform --exit-code 0 || true
           echo "checkov-completed=true" >> $GITHUB_OUTPUT
+        working_directory: terraform
 
       - name: Upload Checkov Report
         if: always()
@@ -62,6 +67,7 @@ jobs:
       - name: Terraform Apply
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: terraform apply -auto-approve tfplan
+        working_directory: terraform
 
   terraform-destroy:
     if: github.event_name == 'workflow_dispatch'
@@ -89,3 +95,4 @@ jobs:
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
+        working_directory: terraform
