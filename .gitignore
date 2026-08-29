@@ -1,0 +1,34 @@
+# Terraform state files
+*.tfstate
+*.tfstate.json
+*.tfplan
+
+# Terraform configuration settings
+.terraform/
+
+# AWS credentials and keys (never commit these!)
+.env
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+credentials
+
+# S3 backend state files (if using remote state)
+# The backend configuration should not be committed if it contains sensitive data
+# but if it's in provider.tf with hardcoded values, you may want to exclude it
+# however, since this project uses a specific S3 bucket, we keep provider.tf but
+# the state file itself must be gitignored
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local configuration
+# If you have local overrides or variables that shouldn't be shared
+terraform.tfvars.json
