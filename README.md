@@ -36,6 +36,8 @@ graph LR
     IGW --> VPC[(VPC 10.0.0.0/16)]
 ```
 
+![Diagrama de arquitetura do projeto](images/arquitetura.png)
+
 ---
 
 ## 🧠 Conceitos básicos (glossário rápido)
@@ -245,7 +247,7 @@ trabalho_terraform/
 │   └── modules/
 │       ├── network/           ← VPC, subnets, Internet Gateway, route tables
 │       └── compute/           ← Security Group, EC2, ALB, Target Group, Listener
-│           └── scripts/
+│          arquitetura.png     ← Diagrama de arquitetura
 │               └── user_data.sh ← Script que instala Apache+PHP e publica o app
 └── images/                    ← Diagramas do projeto
 ```
