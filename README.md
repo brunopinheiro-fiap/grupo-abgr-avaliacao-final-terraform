@@ -86,7 +86,7 @@ O Terraform precisa de "credenciais" para criar recursos na AWS:
 ### 4. Repositório no GitHub
 
 1. Crie um repositório no GitHub (ou use este projeto).
-2. Faça o `push` do código. O pipeline já vem configurado em `.github/workflows/terraform-deploy.yml`.
+2. Faça o `push` do código. Os pipelines já vêm configurados em `.github/workflows/terraform-deploy.yml` (deploy) e `.github/workflows/terraform-destroy.yml` (destroy).
 
 ### 5. Segredos do GitHub (GitHub Secrets)
 
@@ -132,6 +132,10 @@ O job `terraform-apply` executa estas etapas, em ordem:
 | 9. **Terraform Apply**           | **Cria de fato todos os recursos na AWS**              |
 
 > ✅ Etapa **verde** = passou. Etapa **vermelha** = quebrou — clique nela para ver o log.
+
+> 🔎 **Checkov** gera um relatório de segurança (`checkov-report.json`) disponível como **artefato** no final da execução (seção **Artifacts**). Ele é **informativo** — não impede o deploy.
+
+> 🛠️ O workflow usa **Terraform 1.10.5** e versões atuais das actions (compatíveis com **Node 24**), sem avisos de deprecação.
 
 ### Passo 3 — Descubra o endereço do balanceador
 
@@ -201,9 +205,13 @@ Exemplo local: `terraform apply -var="key_name=minhachave"`
 
 ## 🗑️ Destruição (importante para não gerar custos!)
 
-Recursos AWS **geram custo** enquanto existirem. Ao terminar o laboratório, **destrua tudo**.
+O projeto tem um **workflow separado** só para destruir — **"Terraform Destroy"**:
 
-### Pelo GitHub Actions (recomendado)
+1. Aba **Actions** → workflow **"Terraform Destroy"**.
+2. Clique em **Run workflow** → branch `main` → **Run workflow**.
+3. Aguarde: o Terraform remove **todos** os recursos criados.
+
+> 🔒 O **deploy** ("Terraform AWS EC2 + ALB Deploy") e o **destroy** ("Terraform Destroy") são workflows **separados**, com controle de concorrência: eles **nunca rodam ao mesmo tempo** — isso evita o erro de conflito de lock no estado S3
 
 1. Aba **Actions** → **"Terraform AWS EC2 + ALB Deploy"**.
 2. No job **`terraform-destroy`**, clique em **Run workflow** → branch `main` → **Run workflow**.
@@ -221,6 +229,9 @@ terraform destroy   # digite "yes" para confirmar
 ---
 
 ## 📁 Estrutura do projeto
+
+├── terraform-deploy.yml ← Pipeline de DEPLOY (cria a infra)
+│ └── terraform-destroy.yml ← Pipeline de DESTROY (remove a infra, manual
 
 ```
 trabalho_terraform/
@@ -268,6 +279,9 @@ O `use_lockfile` exige **Terraform ≥ 1.10**. Atualize o Terraform local (`terr
 
 ### 5. Quero evitar custos
 
+### 7. Erro "Error acquiring the state lock"
+
+Acontece quando dois processos tentam usar o **mesmo estado** ao mesmo tempo (ex.: deploy e destroy rodando juntos, ou execuções sobrepostas). Os workflows já têm **controle de concorrência** para evitar isso — rode **um de cada vez**. Se mesmo assim ficar travado (alguma execução foi cancelada no meio), apague o objeto `terraform.tfstate.tflock` no bucket S3 — **somente** se nenhuma execução estiver ativa.
 Sempre rode o **destroy** ao terminar. Não deixe as instâncias rodando por dias.
 
 ### 6. Onde vejo o erro?
