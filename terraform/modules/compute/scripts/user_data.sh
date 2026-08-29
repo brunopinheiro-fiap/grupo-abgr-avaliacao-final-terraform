@@ -2,7 +2,7 @@
 
 echo "Update/Install required OS packages"
 yum update -y
-dnf install -y httpd wget php-fpm php-mysqli php-json php php-devel telnet tree git
+dnf install -y httpd wget php-fpm php-mysqli php php-devel telnet tree git
 
 echo "Deploy PHP info app"
 cd /tmp
@@ -18,4 +18,4 @@ find /var/www -type f -exec chmod 0664 {} \;
 
 echo "Start Apache WebServer"
 systemctl enable httpd
-service httpd restart
+systemctl restart httpd

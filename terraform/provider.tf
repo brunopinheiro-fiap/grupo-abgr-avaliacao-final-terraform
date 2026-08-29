@@ -8,10 +8,10 @@ terraform {
     }
   }
   backend "s3" {
-    bucket         = "tf-s3-grupo-abgr"
-    key            = "terraform.tfstate"
-    use_lockfile   = true
-    region         = "us-east-1"
+    bucket       = "tf-s3-grupo-abgr"
+    key          = "terraform.tfstate"
+    use_lockfile = true
+    region       = "us-east-1"
   }
 }
 provider "aws" {

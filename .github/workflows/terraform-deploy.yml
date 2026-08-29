@@ -2,9 +2,9 @@ name: Terraform AWS EC2 + ALB Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -13,6 +13,7 @@ jobs:
 
     env:
       TF_VAR_name_prefix: dynamicsite-lb
+      TF_VAR_key_name: ''
 
     defaults:
       run:
@@ -25,7 +26,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7
+          terraform_version: 1.10.5
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -50,7 +51,8 @@ jobs:
       - name: Run Checkov (informative)
         run: |
           cd terraform
-          checkov -d . --framework terraform --exit-code 0 || true
+          pip install --quiet --break-system-packages checkov || pip install --quiet checkov
+          checkov -d . --framework terraform --exit-code 0 -o json --output-file-path checkov-report.json || true
           echo "checkov-completed=true" >> $GITHUB_OUTPUT
 
       - name: Upload Checkov Report
@@ -58,7 +60,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: checkov-report
-          path: checkov-report.json
+          path: terraform/checkov-report.json
+          if-no-files-found: warn
 
       - name: Terraform Apply
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -76,7 +79,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7
+          terraform_version: 1.10.5
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
