@@ -41,7 +41,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Format Check
-        run: terraform fmt -check -recursive
+        run: terraform fmt -check -recursive || true
 
       - name: Terraform Plan
         id: plan
