@@ -1,0 +1,42 @@
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: terraform-state
+  cancel-in-progress: false
+
+jobs:
+  terraform-destroy:
+    runs-on: ubuntu-latest
+
+    env:
+      TF_VAR_name_prefix: dynamicsite-lb
+      TF_VAR_key_name: ''
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init
+        run: cd terraform && terraform init
+
+      - name: Terraform Destroy
+        run: cd terraform && terraform destroy -auto-approve
